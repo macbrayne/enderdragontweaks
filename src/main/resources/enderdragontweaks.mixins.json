@@ -4,6 +4,7 @@
   "package": "de.macbrayne.enderdragontweaks.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "AbstractHurtingProjectileMixin",
     "DragonFireballMixin",
     "EnderDragonMixin"
   ],
