@@ -2,6 +2,7 @@ package de.macbrayne.enderdragontweaks.mixin;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.projectile.AbstractHurtingProjectile;
 import net.minecraft.world.entity.projectile.DragonFireball;
@@ -19,10 +20,19 @@ public abstract class AbstractHurtingProjectileMixin extends Projectile {
     }
 
     @Inject(method = "canHitEntity", at = @At("HEAD"), cancellable = true)
-    private void preventEnderDragonSelfHits(Entity entity, CallbackInfoReturnable<Boolean> cir) {
-        if (((AbstractHurtingProjectile)(Object)this) instanceof DragonFireball fireball && entity instanceof EnderDragon) {
-            if (this.ownedBy(entity)) {
-                cir.setReturnValue(false);
+    private void preventEnderDragonSelfHits(Entity target, CallbackInfoReturnable<Boolean> cir) {
+        if (((AbstractHurtingProjectile)(Object)this) instanceof DragonFireball fireball) {
+            if (target instanceof EnderDragon) {
+                if (this.ownedBy(target)) {
+                    cir.setReturnValue(false);
+                }
+            }
+            if (target instanceof EnderDragonPart part) {
+                EnderDragon dragon = part.parentMob;
+                if (this.ownedBy(dragon)) {
+                    System.out.println("fisnsfjklsfdjklasfjklfsjkaafjkasdljköjklöafsdjklösdjklöfsdjklöasdfjklösdfjklödfsjklösdfjklfsdjklsdfjklöd");
+                    cir.setReturnValue(false);
+                }
             }
         }
     }
