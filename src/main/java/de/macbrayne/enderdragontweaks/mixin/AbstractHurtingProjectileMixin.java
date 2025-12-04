@@ -30,7 +30,6 @@ public abstract class AbstractHurtingProjectileMixin extends Projectile {
             if (target instanceof EnderDragonPart part) {
                 EnderDragon dragon = part.parentMob;
                 if (this.ownedBy(dragon)) {
-                    System.out.println("fisnsfjklsfdjklasfjklfsjkaafjkasdljköjklöafsdjklösdjklöfsdjklöasdfjklösdfjklödfsjklösdfjklfsdjklsdfjklöd");
                     cir.setReturnValue(false);
                 }
             }

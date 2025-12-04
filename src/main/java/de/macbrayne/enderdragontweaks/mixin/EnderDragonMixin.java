@@ -33,8 +33,8 @@ public abstract class EnderDragonMixin extends Mob implements Enemy {
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/boss/enderdragon/EnderDragon;setHealth(F)V", shift = At.Shift.BEFORE), method = "<init>")
     private void increaseMaxHealth(EntityType<? extends EnderDragon> entityType, Level level, CallbackInfo ci) {
-        if (level instanceof ServerLevel serverLevel) {
-            double modifier = serverLevel.getGameRules().getInt(EnderDragonTweaks.HEALTH) / 200d;
+        if (level instanceof ServerLevel) {
+            double modifier = EnderDragonTweaks.config.health() / 200d;
             getAttributes().getInstance(Attributes.MAX_HEALTH).addOrReplacePermanentModifier(
                     new AttributeModifier(ResourceLocation.fromNamespaceAndPath("enderdragontweaks", "healthboost"), modifier,
                             AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
@@ -44,9 +44,8 @@ public abstract class EnderDragonMixin extends Mob implements Enemy {
 
     @WrapOperation(method = "checkCrystals", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/boss/enderdragon/EnderDragon;setHealth(F)V"))
     private void increaseHealthRegen(EnderDragon instance, float originalHealth, Operation<Float> original) {
-        Level level = instance.level();
-        if (level instanceof ServerLevel serverLevel) {
-            float modifier = serverLevel.getGameRules().getInt(EnderDragonTweaks.HEALTH) / 200f - 1f;
+        if (instance.level() instanceof ServerLevel) {
+            float modifier = EnderDragonTweaks.config.health() / 200f - 1f;
             original.call(instance, originalHealth + modifier);
             return;
         }
@@ -56,14 +55,14 @@ public abstract class EnderDragonMixin extends Mob implements Enemy {
     @ModifyExpressionValue(method = "hurt(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/boss/EnderDragonPart;Lnet/minecraft/world/damagesource/DamageSource;F)Z",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/boss/enderdragon/EnderDragon;getMaxHealth()F"))
     private float adjustMaxSittingDamagePercentage(float originalMaxHealth, ServerLevel serverLevel, EnderDragonPart enderDragonPart, DamageSource damageSource, float amount) {
-        float modifier = serverLevel.getGameRules().getInt(EnderDragonTweaks.HEALTH) / 200f;
+        float modifier = EnderDragonTweaks.config.health() / 200f;
         return originalMaxHealth / modifier;
     }
 
     @Inject(method = "hurt(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/boss/EnderDragonPart;Lnet/minecraft/world/damagesource/DamageSource;F)Z",
             at = @At(value = "HEAD"), cancellable = true)
     private void preventBedDamage(ServerLevel serverLevel, EnderDragonPart enderDragonPart, DamageSource damageSource, float f, CallbackInfoReturnable<Boolean> cir) {
-        if(damageSource.is(DamageTypes.BAD_RESPAWN_POINT)) {
+        if(EnderDragonTweaks.config.preventBedDamage() && damageSource.is(DamageTypes.BAD_RESPAWN_POINT)) {
             cir.setReturnValue(false);
         }
     }
