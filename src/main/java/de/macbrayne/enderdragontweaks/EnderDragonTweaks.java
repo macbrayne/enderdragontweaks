@@ -7,9 +7,12 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistryBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.Potions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +36,14 @@ public class EnderDragonTweaks implements ModInitializer {
                             commandContext.getSource().sendSuccess(() -> Component.literal("Reloaded config. Health: " + config.health() + ", prevent bed damage:" + config.preventBedDamage()), true);
                             return 1;
                         }))));
+
+        FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
+            builder.addMix(
+                    Potions.THICK,
+                    Items.DIAMOND,
+                    Potions.LUCK
+            );
+        });
     }
 
     private static Config load() {
